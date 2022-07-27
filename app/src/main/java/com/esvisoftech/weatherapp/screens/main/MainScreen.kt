@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -22,10 +23,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
+import com.esvisoftech.weatherapp.R
 import com.esvisoftech.weatherapp.data.DataOrException
 import com.esvisoftech.weatherapp.model.Weather
+import com.esvisoftech.weatherapp.model.WeatherItem
 import com.esvisoftech.weatherapp.screens.main.MainViewModel
 import com.esvisoftech.weatherapp.utils.formatDate
+import com.esvisoftech.weatherapp.utils.formatDateTime
 import com.esvisoftech.weatherapp.utils.formatDecimals
 import com.esvisoftech.weatherapp.widgets.WeatherAppBar
 
@@ -61,6 +65,7 @@ Scaffold(topBar = {
 @Composable
 fun MainContent(data: Weather) {
     val imageUrl="https://openweathermap.org/img/wn/${data.list[0].weather[0].icon}.png"
+    val weatherItems=data.list[0]
 Column(modifier = Modifier
     .padding(4.dp)
     .fillMaxWidth(),
@@ -81,13 +86,64 @@ modifier = Modifier.padding(6.dp), fontSize = 15.sp
 Column(verticalArrangement = Arrangement.Center,
 horizontalAlignment = Alignment.CenterHorizontally){
     WeatherStateImage(imageUrl)
-    Text(text = formatDecimals(data.list[0].main.temp), style = MaterialTheme.typography.h4, fontWeight = FontWeight.ExtraBold)
+    Text(text = formatDecimals(data.list[0].main.temp)+"°", style = MaterialTheme.typography.h4, fontWeight = FontWeight.ExtraBold)
     Text(text = data.list[0].weather[0].description, fontStyle = FontStyle.Italic)
 }
     }
 
+HumidityWindPressureRow(weather =weatherItems)
+    Divider(thickness = 2.dp)
+SunriseAndSunset(weather=data)
 }
 }
+
+@Composable
+fun SunriseAndSunset(weather:Weather) {
+Row(modifier = Modifier.padding(12.dp).fillMaxWidth(), horizontalArrangement =Arrangement.SpaceBetween) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Image(painter = painterResource(id = R.drawable.sun), contentDescription ="sunrise",
+            modifier = Modifier.size(40.dp).padding(4.dp) )
+        Text(text = formatDateTime(weather.city.sunrise))
+    }
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Image(painter = painterResource(id = R.drawable.sunset), contentDescription ="sunset",
+            modifier = Modifier.size(40.dp).padding(4.dp) )
+        Text(text = formatDateTime(weather.city.sunset))
+    }
+
+}
+}
+
+@Composable
+fun HumidityWindPressureRow(weather: WeatherItem) {
+Row(modifier = Modifier
+    .padding(12.dp)
+    .fillMaxWidth(),
+horizontalArrangement = Arrangement.SpaceBetween) {
+    Row(modifier = Modifier.padding(4.dp),verticalAlignment = Alignment.CenterVertically){
+       Icon(painter = painterResource(id = R.drawable.humidity), contentDescription ="humidity",
+        modifier = Modifier
+            .size(25.dp)
+            .padding(4.dp))
+        Text(text = "${weather.main.humidity}", style = MaterialTheme.typography.caption)
+    }
+    Row(modifier = Modifier.padding(4.dp),verticalAlignment = Alignment.CenterVertically) {
+        Icon(painter = painterResource(id = R.drawable.indicator), contentDescription ="pressure",
+            modifier = Modifier
+                .size(25.dp)
+                .padding(4.dp))
+        Text(text = "${weather.main.pressure} psi", style = MaterialTheme.typography.caption)
+    }
+    Row(modifier = Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically){
+        Icon(painter = painterResource(id = R.drawable.storm), contentDescription ="wind",
+            modifier = Modifier
+                .size(25.dp)
+                .padding(4.dp))
+        Text(text = "${weather.main.humidity} mph", style = MaterialTheme.typography.subtitle2)
+    }
+}
+}
+
 
 @Composable
 fun WeatherStateImage(imageUrl: String) {
