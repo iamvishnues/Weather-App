@@ -3,16 +3,17 @@ package com.esvisoftech.weatherapp.screens
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
@@ -22,7 +23,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import com.esvisoftech.weatherapp.R
 import com.esvisoftech.weatherapp.data.DataOrException
 import com.esvisoftech.weatherapp.model.Weather
@@ -92,22 +92,83 @@ horizontalAlignment = Alignment.CenterHorizontally){
     }
 
 HumidityWindPressureRow(weather =weatherItems)
-    Divider(thickness = 2.dp)
+Divider(thickness = 2.dp)
 SunriseAndSunset(weather=data)
+    Divider()
+WeatherForecast(historyData=data)
+
+    
 }
 }
 
 @Composable
+fun WeatherForecast(historyData:Weather) {
+    Text("Weather Forecast", style = MaterialTheme.typography.h6, modifier =
+    Modifier
+        .padding(bottom = 20.dp)
+        .padding(top = 10.dp))
+    Column() {
+        Surface(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(),
+            color=Color(0xFFEEF1EF),
+            shape = RoundedCornerShape(14.dp)
+        ) {
+LazyColumn(modifier =Modifier.padding(),
+contentPadding = PaddingValues(2.dp)){
+    items(items=historyData.list){
+        item:WeatherItem ->
+        val imageUrl="https://openweathermap.org/img/wn/${item.weather[0].icon}.png"
+        Card(modifier = Modifier
+            .padding(3.dp)
+            .fillMaxWidth()
+            .height(85.dp)) {
+            Row(modifier = Modifier
+                .padding(10.dp)
+                .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween) {
+                Column() {
+                    Text(formatDate(item.dt).split(",")[0], fontWeight = FontWeight.Bold)
+                    Text(text = formatDateTime(item.dt))
+                }
+
+WeatherStateImage(imageUrl = imageUrl)
+               Surface(modifier = Modifier.padding(2.dp),
+                   shape = RoundedCornerShape(5.dp),
+                   color = Color(0xffffc400)) {
+                   Text(text = "${item.weather[0].description}", modifier = Modifier.padding(5.dp))
+               }
+Column {
+
+    Text(text = "max: ${formatDecimals(item.main.temp_max)}°")
+    Text(text = "min: ${formatDecimals(item.main.temp_min)}°")
+}
+            }
+        }
+    }
+}
+        }
+    }
+}
+
+@Composable
 fun SunriseAndSunset(weather:Weather) {
-Row(modifier = Modifier.padding(12.dp).fillMaxWidth(), horizontalArrangement =Arrangement.SpaceBetween) {
+Row(modifier = Modifier
+    .padding(12.dp)
+    .fillMaxWidth(), horizontalArrangement =Arrangement.SpaceBetween) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Image(painter = painterResource(id = R.drawable.sun), contentDescription ="sunrise",
-            modifier = Modifier.size(40.dp).padding(4.dp) )
+            modifier = Modifier
+                .size(40.dp)
+                .padding(4.dp) )
         Text(text = formatDateTime(weather.city.sunrise))
     }
     Row(verticalAlignment = Alignment.CenterVertically) {
         Image(painter = painterResource(id = R.drawable.sunset), contentDescription ="sunset",
-            modifier = Modifier.size(40.dp).padding(4.dp) )
+            modifier = Modifier
+                .size(40.dp)
+                .padding(4.dp) )
         Text(text = formatDateTime(weather.city.sunset))
     }
 
@@ -139,7 +200,7 @@ horizontalArrangement = Arrangement.SpaceBetween) {
             modifier = Modifier
                 .size(25.dp)
                 .padding(4.dp))
-        Text(text = "${weather.main.humidity} mph", style = MaterialTheme.typography.subtitle2)
+        Text(text = "${weather.wind.speed} mph", style = MaterialTheme.typography.subtitle2)
     }
 }
 }
@@ -148,5 +209,5 @@ horizontalArrangement = Arrangement.SpaceBetween) {
 @Composable
 fun WeatherStateImage(imageUrl: String) {
 Image(painter = rememberAsyncImagePainter(imageUrl), contentDescription ="Icon Image"
-,modifier =Modifier.size(70.dp), contentScale = ContentScale.FillBounds)
+,modifier =Modifier.size(70.dp), contentScale = ContentScale.Fit)
 }
