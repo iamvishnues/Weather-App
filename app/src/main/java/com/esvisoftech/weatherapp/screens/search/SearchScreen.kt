@@ -1,5 +1,6 @@
 package com.esvisoftech.weatherapp.screens.search
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,6 +26,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.esvisoftech.weatherapp.navigation.WeatherScreens
 import com.esvisoftech.weatherapp.widgets.WeatherAppBar
 
 @Composable
@@ -37,7 +39,10 @@ fun searchScreen(navController: NavController){
         androidx.compose.material.Surface() {
             Column(verticalArrangement =Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
-
+SearchBar(modifier =Modifier.fillMaxWidth().padding(16.dp).align(Alignment.CenterHorizontally)){
+    mCity->
+    navController.navigate(WeatherScreens.MainScreen.name + "/$mCity")
+}
             }
 
             }
@@ -46,7 +51,9 @@ fun searchScreen(navController: NavController){
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SearchBar(onSearch:(String)->Unit={}){
+fun SearchBar(
+    modifier: Modifier=Modifier,
+    onSearch:(String)->Unit={}){
     val searchQueryState= rememberSaveable {
         mutableStateOf("")
     }
@@ -59,6 +66,10 @@ fun SearchBar(onSearch:(String)->Unit={}){
             valueState=searchQueryState,
             Placeholder="Bangalore",
             onAction= KeyboardActions {
+                if(!valid) rteurn@KeyboardActions
+                onSearch(searchQueryState.value.trim())
+                searchQueryState.value=""
+                keyboardController?.hide()
             }
         )
     }

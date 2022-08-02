@@ -27,6 +27,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun WeatherSplashScreen(navController:NavController) {
+    val defaultCity="Bangalore"
     val scale=remember{
         androidx.compose.animation.core.Animatable(0f)
     }
@@ -38,7 +39,7 @@ fun WeatherSplashScreen(navController:NavController) {
             OvershootInterpolator(8f).getInterpolation(it)
         }))
         delay(2000L)
-        navController.navigate(WeatherScreens.MainScreen.name)
+        navController.navigate(WeatherScreens.MainScreen.name+"/$defaultCity")
     })
 
     androidx.compose.material.Surface(modifier = Modifier

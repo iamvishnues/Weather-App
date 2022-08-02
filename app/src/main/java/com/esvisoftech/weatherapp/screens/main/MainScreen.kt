@@ -35,12 +35,15 @@ import com.esvisoftech.weatherapp.utils.formatDecimals
 import com.esvisoftech.weatherapp.widgets.*
 
 @Composable
-fun MainScreen(navController: NavController,
-               mainViewModel: MainViewModel= hiltViewModel()) {
+fun MainScreen(
+    navController: NavController,
+    mainViewModel: MainViewModel = hiltViewModel(),
+    city: String?
+) {
     val weatherData= produceState<DataOrException<Weather,Boolean,Exception>>(initialValue = DataOrException(
         loading = true),
     ){
-        value=mainViewModel.getWeatherData("Bangalore")
+        value=mainViewModel.getWeatherData(city=city.toString())
     }.value
     if (weatherData.loading==true){
         Box(
