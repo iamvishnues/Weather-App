@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.esvisoftech.weatherapp.navigation.WeatherScreens
 
 @Composable
 fun WeatherAppBar(
@@ -101,7 +102,14 @@ items.forEachIndexed { index, text ->
                                     } , contentDescription = ""
         , tint = Color.LightGray)
         Text(text = text, modifier = Modifier.clickable {
-
+navController.navigate(
+    when(text){
+        "About"->WeatherScreens.AboutScreen.name
+            "Favorites"->WeatherScreens.FavoriteScreen.name
+        "Settings"->WeatherScreens.SettingsScreen.name
+        else->WeatherScreens.MainScreen.name
+    }
+)
         }, fontWeight = FontWeight.W300)
     }
 }
