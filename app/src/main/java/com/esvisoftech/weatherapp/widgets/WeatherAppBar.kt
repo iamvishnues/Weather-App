@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
@@ -16,8 +17,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.esvisoftech.weatherapp.model.Favorite
 import com.esvisoftech.weatherapp.navigation.WeatherScreens
+import com.esvisoftech.weatherapp.screens.favourites.FavoriteViewModel
 
 @Composable
 fun WeatherAppBar(
@@ -25,6 +29,7 @@ fun WeatherAppBar(
     icon:ImageVector?=null,
     isMainScreen:Boolean=true,
     elevation: Dp=5.dp,
+    favoriteViewModel: FavoriteViewModel= hiltViewModel(),
     navController:NavController,
     onAddActionClicked:()->Unit={},
     onButtonClicked:()->Unit={}
@@ -54,6 +59,7 @@ showDialog.value=true
                       }) {
                           Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Options")
                       }
+
                   }
             else{
                 Box{}
@@ -67,6 +73,19 @@ showDialog.value=true
                                onButtonClicked.invoke()
                            })
                        }
+            if(isMainScreen){
+                val dataList=title.split(",")
+                Icon(
+                    imageVector = Icons.Default.Favorite,
+                    contentDescription = "Favorite Icons", tint = Color.Red.copy(alpha = 0.6f)
+                ,modifier=Modifier.scale(0.9f).clickable {
+                    favoriteViewModel.insertFavorite(Favorite(city =dataList[0],
+                        country =dataList[1] ))
+                    }
+                )
+
+            }
+
         },
     backgroundColor = Color.Transparent, elevation = elevation)
 }
@@ -100,7 +119,7 @@ items.forEachIndexed { index, text ->
             "Settings"->Icons.Default.Settings
             else->Icons.Default.Refresh
                                     } , contentDescription = ""
-        , tint = Color.LightGray)
+        , tint = Color.LightGray, )
         Text(text = text, modifier = Modifier.clickable {
 navController.navigate(
     when(text){

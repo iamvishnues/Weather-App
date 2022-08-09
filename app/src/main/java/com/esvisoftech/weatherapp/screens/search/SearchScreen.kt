@@ -64,7 +64,7 @@ fun SearchBar(
     Column {
         CommonTextField(
             valueState=searchQueryState,
-            Placeholder="Bangalore",
+            Placeholder="Enter City",
             onAction= KeyboardActions {
                 if(!valid) rteurn@KeyboardActions
                 onSearch(searchQueryState.value.trim())
