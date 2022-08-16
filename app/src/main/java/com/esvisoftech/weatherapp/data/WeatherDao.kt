@@ -2,6 +2,7 @@ package com.esvisoftech.weatherapp.data
 
 import androidx.room.*
 import com.esvisoftech.weatherapp.model.Favorite
+import com.esvisoftech.weatherapp.model.Unit
 import kotlinx.coroutines.flow.Flow
 
 
@@ -24,4 +25,20 @@ interface WeatherDao {
 
     @Delete
     suspend fun deleteFavorite(favorite: Favorite)
+
+    @Query("SELECT * FROM settings_tbl")
+    fun getUnits():Flow<List<Unit>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertUnit(unit: Unit)
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateUnit(unit: Unit)
+
+    @Query("DELETE FROM settings_tbl")
+    suspend fun deleteAllUnits()
+
+    @Delete
+    suspend fun deleteUnit(unit: Unit)
+
 }
