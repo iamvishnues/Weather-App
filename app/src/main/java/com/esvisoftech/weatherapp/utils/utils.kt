@@ -15,11 +15,17 @@ fun formatDateTime(timeStamp: Int):String{
     return sdf.format(date)
 }
 
-fun formatDecimals(item:Double):String{
-    val fa=item.roundToInt()
-    val cel=(fa - 32.0) * 5.0 / 9.0
-    return "%.0f".format(cel)
-}
+//fun formatDecimals(item:Double):String{
+//    val fa=item.roundToInt()
+//    val cel=(fa - 32.0) * 5.0 / 9.0
+//    return "%.0f".format(cel)
+////    return "%.0f".format(fa)
+//}
 
+
+fun formatDecimals(item:Double):String{
+
+    return "%.0f".format(item)
+}
 
 
